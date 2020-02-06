@@ -14,16 +14,26 @@
 
 import { RegistryEntry } from './RegistryEntry';
 
+export enum EnvironmentFlags {
+    ENVIRONMENT  = 1 << 0,
+    ANSIBLE = 1 << 1,
+    MANAGED = 1 << 2,
+    LOCAL = 1 << 3,
+    OPS_TOOLS = 1 << 4,
+}
+
 export enum EnvironmentType {
-    ENVIRONMENT = 1, // Standard remote environment
-    ANSIBLE_ENVIRONMENT = 2, // Ansible environment (non-managed or managed) - includes Local environment
-    OPS_TOOLS_ENVIRONMENT = 3
+    ENVIRONMENT = EnvironmentFlags.ENVIRONMENT, // Standard remote environment
+    ANSIBLE_ENVIRONMENT =  EnvironmentFlags.ANSIBLE, // Ansible environment (non-managed or managed) - includes Local environment
+    MANAGED_ANSIBLE_ENVIRONMENT = EnvironmentFlags.ANSIBLE | EnvironmentFlags.MANAGED,
+    LOCAL_ENVIRONMENT = EnvironmentFlags.ANSIBLE | EnvironmentFlags.MANAGED | EnvironmentFlags.LOCAL,
+    OPS_TOOLS_ENVIRONMENT = EnvironmentFlags.OPS_TOOLS
 }
 
 export class FabricEnvironmentRegistryEntry extends RegistryEntry {
 
     public managedRuntime?: boolean; // True if the Local environment or a managed Ansible environment
-    public environmentType?: EnvironmentType;
+    public environmentType: EnvironmentType;
     public environmentDirectory?: string; // the dir where the ansible output is
     public url?: string;
     constructor(fields?: FabricEnvironmentRegistryEntry) {

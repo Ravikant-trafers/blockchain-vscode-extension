@@ -17,7 +17,7 @@ import { FabricEnvironmentRegistry } from '../../src/registries/FabricEnvironmen
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as path from 'path';
-import { FabricEnvironmentRegistryEntry, EnvironmentType } from '../../src/registries/FabricEnvironmentRegistryEntry';
+import { FabricEnvironmentRegistryEntry, EnvironmentType, EnvironmentFlags } from '../../src/registries/FabricEnvironmentRegistryEntry';
 import { FabricRuntimeUtil } from '../../src/util/FabricRuntimeUtil';
 
 chai.should();
@@ -42,15 +42,15 @@ describe('FabricEnvironmentRegistry', () => {
 
     it('should get all the environments and put local fabric first', async () => {
         const environmentOne: FabricEnvironmentRegistryEntry = new FabricEnvironmentRegistryEntry({
-            name: 'environmentOne'
+            name: 'environmentOne',
+            environmentType: EnvironmentType.ENVIRONMENT
         });
 
         await registry.getAll().should.eventually.deep.equal([]);
 
         await FabricEnvironmentRegistry.instance().add(new FabricEnvironmentRegistryEntry({
             name: FabricRuntimeUtil.LOCAL_FABRIC,
-            managedRuntime: true,
-            environmentType: EnvironmentType.ANSIBLE_ENVIRONMENT
+            environmentType: EnvironmentType.LOCAL_ENVIRONMENT
         }));
 
         const localFabricEntry: FabricEnvironmentRegistryEntry = await FabricEnvironmentRegistry.instance().get(FabricRuntimeUtil.LOCAL_FABRIC);
@@ -61,37 +61,37 @@ describe('FabricEnvironmentRegistry', () => {
 
     it('should get all environments but not show local fabric', async () => {
         const environmentOne: FabricEnvironmentRegistryEntry = new FabricEnvironmentRegistryEntry({
-            name: 'environmentOne'
+            name: 'environmentOne',
+            environmentType: EnvironmentType.ENVIRONMENT
         });
 
         await registry.getAll().should.eventually.deep.equal([]);
 
         await FabricEnvironmentRegistry.instance().add(new FabricEnvironmentRegistryEntry({
             name: FabricRuntimeUtil.LOCAL_FABRIC,
-            managedRuntime: true,
-            environmentType: EnvironmentType.ANSIBLE_ENVIRONMENT
+            environmentType: EnvironmentType.LOCAL_ENVIRONMENT
         }));
         await registry.add(environmentOne);
-        await registry.getAll(false).should.eventually.deep.equal([environmentOne]);
+        await registry.getAll([], [EnvironmentFlags.LOCAL]).should.eventually.deep.equal([environmentOne]);
     });
 
     it(`should get all managed environments including the ${FabricRuntimeUtil.LOCAL_FABRIC}`, async () => {
 
         const environmentOne: FabricEnvironmentRegistryEntry = new FabricEnvironmentRegistryEntry({
-            name: 'environmentOne'
+            name: 'environmentOne',
+            environmentType: EnvironmentType.ANSIBLE_ENVIRONMENT
         });
 
         const environmentTwo: FabricEnvironmentRegistryEntry = new FabricEnvironmentRegistryEntry({
             name: 'environmentTwo',
-            managedRuntime: true
+            environmentType: EnvironmentType.MANAGED_ANSIBLE_ENVIRONMENT
         });
 
         await registry.getAll().should.eventually.deep.equal([]);
 
         await FabricEnvironmentRegistry.instance().add(new FabricEnvironmentRegistryEntry({
             name: FabricRuntimeUtil.LOCAL_FABRIC,
-            managedRuntime: true,
-            environmentType: EnvironmentType.ANSIBLE_ENVIRONMENT
+            environmentType: EnvironmentType.LOCAL_ENVIRONMENT
         }));
 
         const localFabricEntry: FabricEnvironmentRegistryEntry = await FabricEnvironmentRegistry.instance().get(FabricRuntimeUtil.LOCAL_FABRIC);
@@ -99,32 +99,31 @@ describe('FabricEnvironmentRegistry', () => {
         await registry.add(environmentOne);
         await registry.add(environmentTwo);
 
-        await registry.getAll(true, true).should.eventually.deep.equal([localFabricEntry, environmentTwo]);
+        await registry.getAll([EnvironmentFlags.MANAGED]).should.eventually.deep.equal([localFabricEntry, environmentTwo]);
     });
 
     it(`should get all managed environments excluding the ${FabricRuntimeUtil.LOCAL_FABRIC}`, async () => {
 
         const environmentOne: FabricEnvironmentRegistryEntry = new FabricEnvironmentRegistryEntry({
-            name: 'environmentOne'
+            name: 'environmentOne',
+            environmentType: EnvironmentType.ANSIBLE_ENVIRONMENT
         });
 
         const environmentTwo: FabricEnvironmentRegistryEntry = new FabricEnvironmentRegistryEntry({
             name: 'environmentTwo',
-            managedRuntime: true,
-            environmentType: EnvironmentType.ANSIBLE_ENVIRONMENT
+            environmentType: EnvironmentType.MANAGED_ANSIBLE_ENVIRONMENT
         });
         await registry.getAll().should.eventually.deep.equal([]);
 
         await FabricEnvironmentRegistry.instance().add(new FabricEnvironmentRegistryEntry({
             name: FabricRuntimeUtil.LOCAL_FABRIC,
-            managedRuntime: true,
-            environmentType: EnvironmentType.ANSIBLE_ENVIRONMENT
+            environmentType: EnvironmentType.LOCAL_ENVIRONMENT
         }));
 
         await registry.add(environmentOne);
         await registry.add(environmentTwo);
 
-        await registry.getAll(false, true).should.eventually.deep.equal([environmentTwo]);
+        await registry.getAll([EnvironmentFlags.MANAGED], [EnvironmentFlags.LOCAL]).should.eventually.deep.equal([environmentTwo]);
     });
 
     it('should only get non ansible environments', async () => {
@@ -142,13 +141,12 @@ describe('FabricEnvironmentRegistry', () => {
 
         await FabricEnvironmentRegistry.instance().add(new FabricEnvironmentRegistryEntry({
             name: FabricRuntimeUtil.LOCAL_FABRIC,
-            managedRuntime: true,
-            environmentType: EnvironmentType.ANSIBLE_ENVIRONMENT
+            environmentType: EnvironmentType.LOCAL_ENVIRONMENT
         }));
 
         await registry.add(environmentOne);
         await registry.add(environmentTwo);
 
-        await registry.getAll(false, false, true).should.eventually.deep.equal([environmentOne]);
+        await registry.getAll([], [EnvironmentFlags.ANSIBLE]).should.eventually.deep.equal([environmentOne]);
     });
 });

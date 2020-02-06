@@ -21,7 +21,7 @@ import { TestUtil } from '../TestUtil';
 import { UserInputUtil } from '../../extension/commands/UserInputUtil';
 import { ExtensionCommands } from '../../ExtensionCommands';
 import { VSCodeBlockchainOutputAdapter } from '../../extension/logging/VSCodeBlockchainOutputAdapter';
-import { FabricEnvironmentRegistry, FabricEnvironmentRegistryEntry, FabricRuntimeUtil, LogType, FabricGatewayRegistryEntry } from 'ibm-blockchain-platform-common';
+import { FabricEnvironmentRegistry, FabricEnvironmentRegistryEntry, FabricRuntimeUtil, LogType, FabricGatewayRegistryEntry, EnvironmentType } from 'ibm-blockchain-platform-common';
 import { BlockchainEnvironmentExplorerProvider } from '../../extension/explorer/environmentExplorer';
 import { ExtensionUtil } from '../../extension/util/ExtensionUtil';
 import { FabricEnvironmentManager } from '../../extension/fabric/environments/FabricEnvironmentManager';
@@ -60,13 +60,15 @@ describe('DeleteEnvironmentCommand', () => {
             environments = [];
 
             myEnvironmentA = new FabricEnvironmentRegistryEntry({
-                name: 'myEnvironmentA'
+                name: 'myEnvironmentA',
+                environmentType: EnvironmentType.ENVIRONMENT
             });
 
             await FabricEnvironmentRegistry.instance().add(myEnvironmentA);
 
             myEnvironmentB = new FabricEnvironmentRegistryEntry({
-                name: 'myEnvironmentB'
+                name: 'myEnvironmentB',
+                environmentType: EnvironmentType.ENVIRONMENT
             });
 
             await FabricEnvironmentRegistry.instance().add(myEnvironmentB);

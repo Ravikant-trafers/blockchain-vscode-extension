@@ -26,14 +26,12 @@ import { TemporaryCommandRegistry } from '../extension/dependencies/TemporaryCom
 import { TestUtil } from './TestUtil';
 import { Reporter } from '../extension/util/Reporter';
 import { ExtensionCommands } from '../ExtensionCommands';
-import { LogType, FabricGatewayRegistry, FabricGatewayRegistryEntry, FabricEnvironmentRegistry, FabricEnvironmentRegistryEntry } from 'ibm-blockchain-platform-common';
+import { LogType, FabricGatewayRegistry, FabricGatewayRegistryEntry, FabricEnvironmentRegistry, FabricEnvironmentRegistryEntry, EnvironmentType } from 'ibm-blockchain-platform-common';
 import { SettingConfigurations } from '../configurations';
 import { UserInputUtil } from '../extension/commands/UserInputUtil';
 import { dependencies } from '../package.json';
 import { GlobalState, DEFAULT_EXTENSION_DATA, ExtensionData } from '../extension/util/GlobalState';
 import { BlockchainGatewayExplorerProvider } from '../extension/explorer/gatewayExplorer';
-import { FabricGatewayHelper } from '../extension/fabric/FabricGatewayHelper';
-import { FabricWalletHelper } from '../extension/fabric/FabricWalletHelper';
 import { BlockchainEnvironmentExplorerProvider } from '../extension/explorer/environmentExplorer';
 import { BlockchainWalletExplorerProvider } from '../extension/explorer/walletExplorer';
 
@@ -128,7 +126,8 @@ describe('Extension Tests', () => {
             const walletTreeSpy: sinon.SinonSpy = mySandBox.spy(walletTreeDataProvider['_onDidChangeTreeData'], 'fire');
 
             const environment: FabricEnvironmentRegistryEntry = new FabricEnvironmentRegistryEntry({
-                name: 'myEnvironment'
+                name: 'myEnvironment',
+                environmentType: EnvironmentType.ENVIRONMENT
             });
 
             await FabricEnvironmentRegistry.instance().add(environment);
