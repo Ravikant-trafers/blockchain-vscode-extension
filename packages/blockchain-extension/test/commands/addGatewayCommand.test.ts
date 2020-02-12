@@ -86,7 +86,8 @@ describe('AddGatewayCommand', () => {
             gateways.length.should.equal(1);
             gateways[0].should.deep.equal({
                 name: 'myGateway',
-                associatedWallet: ''
+                associatedWallet: '',
+                connectionProfilePath: path.join(rootPath, '../../test/data/connectionOne/connection.json')
             });
             executeCommandSpy.should.have.been.calledWith(ExtensionCommands.REFRESH_GATEWAYS);
             copyConnectionProfileStub.should.have.been.calledOnce;
@@ -114,12 +115,14 @@ describe('AddGatewayCommand', () => {
             gateways.length.should.equal(2);
             gateways[0].should.deep.equal({
                 name: 'myGatewayOne',
-                associatedWallet: ''
+                associatedWallet: '',
+                connectionProfilePath: path.join(rootPath, '../../test/data/connectionOne/connection.json')
             });
 
             gateways[1].should.deep.equal({
                 name: 'myGatewayTwo',
-                associatedWallet: ''
+                associatedWallet: '',
+                connectionProfilePath: path.join(rootPath, '../../test/data/connectionTwo/connection.json')
             });
 
             executeCommandSpy.should.have.been.calledWith(ExtensionCommands.REFRESH_GATEWAYS);
@@ -171,7 +174,8 @@ describe('AddGatewayCommand', () => {
             gateways.length.should.equal(1);
             gateways[0].should.deep.equal({
                 name: 'myGatewayOne',
-                associatedWallet: ''
+                associatedWallet: '',
+                connectionProfilePath: path.join(rootPath, '../../test/data/connectionOne/connection.json')
             });
 
             executeCommandSpy.should.have.been.calledWith(ExtensionCommands.REFRESH_GATEWAYS);
@@ -229,6 +233,7 @@ describe('AddGatewayCommand', () => {
                 name: 'myGateway',
                 connectionProfilePath,
                 associatedWallet: 'Org1',
+                connectionProfilePath: path.join('blockchain', 'extension', 'directory', 'gatewayOne', 'connection.json'),
                 fromEnvironment: 'myEnv'
             });
             executeCommandSpy.should.have.been.calledWith(ExtensionCommands.REFRESH_GATEWAYS);
@@ -334,6 +339,7 @@ describe('AddGatewayCommand', () => {
                 name: 'myGateway',
                 connectionProfilePath,
                 associatedWallet: 'Org1',
+                connectionProfilePath: path.join('blockchain', 'extension', 'directory', 'gatewayOne', 'connection.json'),
                 fromEnvironment: 'myEnv'
             });
 

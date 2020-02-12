@@ -108,9 +108,12 @@ async function createGatewayFromEnvironment(gatewayName: string, environmentRegi
 
     const peerNode: FabricNode = chosenOrg.data;
 
+    const connectionProfilePath: string = await FabricGatewayHelper.generateConnectionProfile(gatewayName, peerNode, caNode);
+
     const fabricGatewayEntry: FabricGatewayRegistryEntry = new FabricGatewayRegistryEntry();
     fabricGatewayEntry.name = gatewayName;
     fabricGatewayEntry.associatedWallet = peerNode.wallet;
+    fabricGatewayEntry.connectionProfilePath = connectionProfilePath;
     fabricGatewayEntry.fromEnvironment = environmentRegistryEntry.name;
 
     const connectionProfilePath: string = await FabricGatewayHelper.generateConnectionProfile(gatewayName, peerNode, caNode);
@@ -142,6 +145,7 @@ async function createGatewayFromCCP(gatewayName: string): Promise<FabricGatewayR
     const fabricGatewayEntry: FabricGatewayRegistryEntry = new FabricGatewayRegistryEntry();
     fabricGatewayEntry.name = gatewayName;
     fabricGatewayEntry.associatedWallet = '';
+    fabricGatewayEntry.connectionProfilePath = connectionProfilePath;
 
     const fabricGatewayRegistry: FabricGatewayRegistry = FabricGatewayRegistry.instance();
     await fabricGatewayRegistry.add(fabricGatewayEntry);
